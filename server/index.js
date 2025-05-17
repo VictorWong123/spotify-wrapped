@@ -22,9 +22,10 @@ app.get('/login', (req, res) => {
         'user-read-email',
     ].join(' ');
 
+    const showDialog = req.query.show_dialog === 'true';
     const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(
         scope
-    )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+    )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
 
     res.redirect(authUrl);
 });
