@@ -1,0 +1,169 @@
+.comparison-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Profile Section */
+.profile-section {
+    padding: 1rem;
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-image-small {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+/* Artist Card */
+.artist-card {
+    background-color: var(--spotify-light-gray);
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.artist-card:hover {
+    background-color: var(--spotify-lighter-gray);
+}
+
+.artist-image {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.artist-name {
+    font-size: 1rem;
+    color: var(--spotify-text-primary);
+    margin: 0.5rem 0;
+    font-weight: 500;
+}
+
+/* Search Section */
+.search-section {
+    margin-bottom: 1rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input-container {
+    flex: 1;
+}
+
+/* Comparison Section */
+.comparison-section {
+    margin-top: 2rem;
+}
+
+.comparison-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.compatibility-score {
+    color: var(--spotify-green);
+}
+
+/* Chart Section */
+.chart-container {
+    height: 400px;
+    margin-bottom: 3rem;
+}
+
+/* Share Section */
+.shareable-link-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--spotify-light-gray);
+    border-radius: 4px;
+}
+
+.shareable-link-container input {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    background-color: var(--spotify-dark-gray);
+}
+
+/* Input Method Toggle */
+.input-method-toggle {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.toggle-button {
+    flex: 1;
+    padding: 0.8rem;
+    background-color: var(--spotify-light-gray);
+    border: 1px solid var(--spotify-border);
+    border-radius: 4px;
+    color: var(--spotify-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-button:hover {
+    background-color: var(--spotify-lighter-gray);
+    color: var(--spotify-text-primary);
+}
+
+.toggle-button.active {
+    background-color: var(--spotify-green);
+    color: var(--spotify-text-primary);
+    border-color: var(--spotify-green);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .comparison-page {
+        padding: 1rem;
+    }
+
+    .flex-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-image-small {
+        width: 80px;
+        height: 80px;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-input-container {
+        width: 100%;
+    }
+
+    .input-method-toggle {
+        flex-direction: column;
+    }
+
+    .shareable-link-container input {
+        font-size: 0.8rem;
+    }
+}

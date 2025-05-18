@@ -1,0 +1,329 @@
+:root {
+    /* Colors */
+    --spotify-black: #121212;
+    --spotify-dark-gray: #181818;
+    --spotify-light-gray: #282828;
+    --spotify-lighter-gray: #383838;
+    --spotify-green: #1DB954;
+    --spotify-green-hover: #1ed760;
+    --spotify-text-primary: #FFFFFF;
+    --spotify-text-secondary: #B3B3B3;
+    --spotify-border: #404040;
+    --spotify-error: #ff4444;
+    --spotify-error-bg: rgba(255, 68, 68, 0.1);
+    --spotify-error-border: rgba(255, 68, 68, 0.2);
+}
+
+/* Common styles */
+.dark-theme {
+    min-height: 100vh;
+    background-color: var(--spotify-black);
+    color: var(--spotify-text-primary);
+}
+
+.card {
+    background-color: var(--spotify-dark-gray);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.card-title {
+    font-size: 1.8rem;
+    color: var(--spotify-text-primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.card-subtitle {
+    font-size: 1.5rem;
+    color: var(--spotify-green);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Form elements */
+.spotify-input {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: var(--spotify-light-gray);
+    border: 1px solid var(--spotify-border);
+    border-radius: 4px;
+    color: var(--spotify-text-primary);
+    width: 100%;
+}
+
+.spotify-input::placeholder {
+    color: var(--spotify-text-secondary);
+}
+
+.spotify-button {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--spotify-green);
+    color: var(--spotify-text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.spotify-button:hover {
+    background-color: var(--spotify-green-hover);
+}
+
+.spotify-button:disabled {
+    background-color: #535353;
+    cursor: not-allowed;
+}
+
+/* Error message */
+.error-message {
+    color: var(--spotify-error);
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--spotify-error-bg);
+    border-radius: 4px;
+    border: 1px solid var(--spotify-error-border);
+}
+
+/* Grid layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Flex layout */
+.flex-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.flex-center {
+    align-items: center;
+}
+
+.flex-start {
+    align-items: flex-start;
+}
+
+/* Typography */
+.text-secondary {
+    color: var(--spotify-text-secondary);
+    font-size: 0.9rem;
+}
+
+.text-large {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.text-medium {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.text-small {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Navbar Styles */
+.spotify-navbar {
+    background-color: var(--spotify-dark-gray);
+    border-bottom: 1px solid var(--spotify-border);
+    padding: 0.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: var(--spotify-text-secondary);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--spotify-text-primary);
+    background-color: var(--spotify-lighter-gray);
+}
+
+.nav-link.active {
+    color: var(--spotify-text-primary);
+    background-color: var(--spotify-green);
+}
+
+.logout-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    background-color: var(--spotify-light-gray);
+    color: var(--spotify-text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+    background-color: var(--spotify-lighter-gray);
+    transform: translateY(-1px);
+}
+
+/* Welcome Header */
+.welcome-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--spotify-border);
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--spotify-text-primary);
+    margin: 0;
+}
+
+/* Main Content Styles */
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.login-button {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    margin-top: 2rem;
+}
+
+.loading-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--spotify-text-secondary);
+    font-size: 1.1rem;
+}
+
+.spotify-link {
+    color: var(--spotify-green);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.spotify-link:hover {
+    color: var(--spotify-green-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .spotify-navbar {
+        padding: 0.5rem 1rem;
+    }
+
+    .nav-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .logout-button {
+        width: 100%;
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+    }
+}
+
+/* Visualizations Styles */
+.visualizations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+    gap: 2rem;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+    }
+}
+
+/* Wrapped Page Styles */
+.wrapped-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Comparison Page Styles */
+.comparison-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+    .wrapped-page,
+    .comparison-page {
+        padding: 1rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+    }
+}

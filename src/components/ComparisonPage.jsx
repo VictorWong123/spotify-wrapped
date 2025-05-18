@@ -1,15 +1,48 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import '../styles/darkTheme.css';
+import '../styles/ComparisonPage.css';
 
 const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUserTopTracks }) => {
+    const [inputMethod, setInputMethod] = useState('uri'); // 'uri' or 'link'
     const [searchQuery, setSearchQuery] = useState('');
+    const [shareableLink, setShareableLink] = useState('');
     const [otherUser, setOtherUser] = useState(null);
     const [otherUserTopArtists, setOtherUserTopArtists] = useState([]);
     const [otherUserTopTracks, setOtherUserTopTracks] = useState([]);
     const [compatibilityScore, setCompatibilityScore] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Generate a shareable link for the current user
+    const generateShareableLink = () => {
+        const data = {
+            userId: currentUser.id,
+            displayName: currentUser.display_name,
+            timestamp: new Date().toISOString()
+        };
+        const encodedData = btoa(JSON.stringify(data));
+        const link = `${window.location.origin}/compare?data=${encodedData}`;
+        setShareableLink(link);
+        navigator.clipboard.writeText(link);
+    };
+
+    const extractUserId = (input) => {
+        // Try Spotify URI format (spotify:user:username)
+        const uriMatch = input.match(/spotify:user:([^:]+)/);
+        if (uriMatch) {
+            return uriMatch[1];
+        }
+
+        // Try web URL format (https://open.spotify.com/user/...)
+        const urlMatch = input.match(/open\.spotify\.com\/user\/([^?]+)/);
+        if (urlMatch) {
+            return urlMatch[1];
+        }
+
+        return null;
+    };
 
     const searchUser = async (e) => {
         e.preventDefault();
@@ -18,17 +51,38 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
         setIsLoading(true);
         setError(null);
         try {
-            // Search for user
-            const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=user&limit=1`, {
+            let userId;
+
+            if (inputMethod === 'uri') {
+                // Handle both URI and web URL formats
+                userId = extractUserId(searchQuery);
+                if (!userId) {
+                    setError('Invalid Spotify link. Please use either:\n- Spotify URI (spotify:user:username)\n- Web URL (https://open.spotify.com/user/...)');
+                    return;
+                }
+            } else {
+                // Handle shareable link
+                try {
+                    const urlParams = new URLSearchParams(searchQuery.split('?')[1]);
+                    const data = JSON.parse(atob(urlParams.get('data')));
+                    userId = data.userId;
+                } catch (err) {
+                    setError('Invalid shareable link');
+                    return;
+                }
+            }
+
+            // Fetch user profile
+            const userRes = await axios.get(`https://api.spotify.com/v1/users/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (!searchRes.data.users.items.length) {
+            if (!userRes.data) {
                 setError('User not found');
                 return;
             }
 
-            const foundUser = searchRes.data.users.items[0];
+            const foundUser = userRes.data;
             setOtherUser(foundUser);
 
             // Fetch their top artists and tracks
@@ -55,7 +109,11 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
 
         } catch (error) {
             console.error('Error searching user:', error);
-            setError('Error searching for user. Please try again.');
+            if (error.response?.status === 403) {
+                setError('This user\'s data is private. They need to share their wrapped link with you.');
+            } else {
+                setError('Error searching for user. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -124,85 +182,156 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-            <h2>Compare Music Taste</h2>
-
-            <form onSubmit={searchUser} style={{ marginBottom: '2rem' }}>
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for a Spotify user..."
-                    style={{
-                        padding: '0.5rem',
-                        fontSize: '1rem',
-                        width: '300px',
-                        marginRight: '1rem'
-                    }}
-                />
+        <div className="dark-theme comparison-page">
+            {/* Share Section */}
+            <div className="card">
+                <h2 className="card-title">Share Your Wrapped</h2>
+                <p className="text-secondary">
+                    Generate a shareable link to let others compare their music taste with yours
+                </p>
                 <button
-                    type="submit"
-                    disabled={isLoading}
-                    style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#1DB954',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                    }}
+                    onClick={generateShareableLink}
+                    className="spotify-button"
+                    style={{ marginTop: '1rem' }}
                 >
-                    {isLoading ? 'Searching...' : 'Search'}
+                    Generate Shareable Link
                 </button>
-            </form>
+                {shareableLink && (
+                    <div className="shareable-link-container">
+                        <p className="text-secondary">Link copied to clipboard!</p>
+                        <input
+                            type="text"
+                            value={shareableLink}
+                            readOnly
+                            className="spotify-input"
+                            onClick={(e) => e.target.select()}
+                        />
+                    </div>
+                )}
+            </div>
 
-            {error && (
-                <div style={{ color: 'red', marginBottom: '1rem' }}>
-                    {error}
+            {/* Search Section */}
+            <div className="card">
+                <h2 className="card-title">
+                    Compare with Another User
+                </h2>
+
+                <div className="input-method-toggle">
+                    <button
+                        className={`toggle-button ${inputMethod === 'uri' ? 'active' : ''}`}
+                        onClick={() => setInputMethod('uri')}
+                    >
+                        Use Spotify Link
+                    </button>
+                    <button
+                        className={`toggle-button ${inputMethod === 'link' ? 'active' : ''}`}
+                        onClick={() => setInputMethod('link')}
+                    >
+                        Use Shareable Link
+                    </button>
                 </div>
-            )}
 
-            {otherUser && compatibilityScore !== null && (
-                <div style={{ marginBottom: '2rem' }}>
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '2rem',
-                        backgroundColor: '#f5f5f5',
-                        borderRadius: '8px',
-                        marginBottom: '2rem'
-                    }}>
-                        <h3>Music Taste Compatibility</h3>
-                        <div style={{
-                            fontSize: '3rem',
-                            fontWeight: 'bold',
-                            color: compatibilityScore >= 70 ? '#1DB954' :
-                                compatibilityScore >= 40 ? '#FFA726' : '#EF5350'
-                        }}>
-                            {compatibilityScore}%
+                <form onSubmit={searchUser} className="search-section">
+                    <p className="text-secondary">
+                        {inputMethod === 'uri'
+                            ? 'Enter a Spotify profile link (URI or web URL)'
+                            : 'Paste a shareable wrapped link'}
+                    </p>
+                    <div className="search-form">
+                        <div className="search-input-container">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={inputMethod === 'uri'
+                                    ? 'spotify:user:username or https://open.spotify.com/user/...'
+                                    : 'Paste wrapped link here'}
+                                className="spotify-input"
+                            />
                         </div>
-                        <p style={{ color: '#666' }}>
-                            {compatibilityScore >= 70 ? 'Great match! You have very similar music taste!' :
-                                compatibilityScore >= 40 ? 'Moderate match. You share some common interests.' :
-                                    'Different tastes! But that\'s what makes music interesting!'}
-                        </p>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="spotify-button"
+                        >
+                            {isLoading ? 'Searching...' : 'Compare'}
+                        </button>
+                    </div>
+                </form>
+
+                {error && (
+                    <div className="error-message">
+                        {error.split('\n').map((line, i) => (
+                            <p key={i}>{line}</p>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Comparison Results */}
+            {otherUser && (
+                <div className="card">
+                    <div className="comparison-header">
+                        {otherUser.images?.[0]?.url && (
+                            <img
+                                src={otherUser.images[0].url}
+                                alt={otherUser.display_name}
+                                className="profile-image-small"
+                            />
+                        )}
+                        <div>
+                            <h2 className="text-medium">
+                                {otherUser.display_name}
+                            </h2>
+                            {compatibilityScore !== null && (
+                                <div className="text-small compatibility-score">
+                                    Compatibility Score: {compatibilityScore}%
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <h3>Genre Comparison</h3>
-                    <div style={{ height: '400px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={prepareGenreComparisonData()}
-                                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="genre" angle={-45} textAnchor="end" height={100} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey={currentUser.display_name} fill="#1DB954" />
-                                <Bar dataKey={otherUser.display_name} fill="#FFA726" />
-                            </BarChart>
-                        </ResponsiveContainer>
+                    {/* Comparison Charts */}
+                    <div className="comparison-section">
+                        <h3 className="card-subtitle">
+                            Top Artists Comparison
+                        </h3>
+                        <div className="chart-container">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={comparisonData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--spotify-border)" />
+                                    <XAxis
+                                        dataKey="name"
+                                        stroke="var(--spotify-text-secondary)"
+                                        tick={{ fill: 'var(--spotify-text-secondary)' }}
+                                    />
+                                    <YAxis
+                                        stroke="var(--spotify-text-secondary)"
+                                        tick={{ fill: 'var(--spotify-text-secondary)' }}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{
+                                            backgroundColor: 'var(--spotify-light-gray)',
+                                            border: '1px solid var(--spotify-border)',
+                                            borderRadius: '4px'
+                                        }}
+                                        labelStyle={{ color: 'var(--spotify-text-primary)' }}
+                                    />
+                                    <Legend />
+                                    <Bar
+                                        dataKey="currentUser"
+                                        name={currentUser?.display_name || 'You'}
+                                        fill="var(--spotify-green)"
+                                    />
+                                    <Bar
+                                        dataKey="otherUser"
+                                        name={otherUser.display_name}
+                                        fill="var(--spotify-green)"
+                                        fillOpacity={0.6}
+                                    />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 </div>
             )}

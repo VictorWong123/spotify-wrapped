@@ -1,0 +1,147 @@
+.dashboard-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background-color: var(--spotify-light-gray);
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.stat-card:hover {
+    background-color: var(--spotify-lighter-gray);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--spotify-green);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--spotify-text-secondary);
+    font-size: 1rem;
+}
+
+/* Top Lists Section */
+.top-lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.top-list-card {
+    background-color: var(--spotify-light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.top-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.top-list-title {
+    font-size: 1.5rem;
+    color: var(--spotify-text-primary);
+    font-weight: 600;
+}
+
+.top-list-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.top-list-item:hover {
+    background-color: var(--spotify-lighter-gray);
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    color: var(--spotify-text-primary);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.item-details {
+    color: var(--spotify-text-secondary);
+    font-size: 0.9rem;
+}
+
+.item-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--spotify-text-secondary);
+    min-width: 2rem;
+    text-align: center;
+}
+
+/* Genre Distribution */
+.genre-section {
+    margin-bottom: 3rem;
+}
+
+.genre-chart {
+    background-color: var(--spotify-light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: 400px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-page {
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-lists {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .top-list-item {
+        padding: 0.5rem;
+    }
+
+    .item-image {
+        width: 50px;
+        height: 50px;
+    }
+}

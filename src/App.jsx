@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import Visualizations from './components/Visualizations';
+import Dashboard from './components/Dashboard';
 import ComparisonPage from './components/ComparisonPage';
+import './styles/darkTheme.css';
+import './App.css';
 
 const BACKEND_URL = 'http://127.0.0.1:8888';
 
@@ -10,6 +13,45 @@ function getTokenFromUrl() {
     return params.get('access_token');
 }
 
+// Navbar component
+const Navbar = ({ onLogout }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        onLogout();
+        navigate('/');
+    };
+
+    return (
+        <nav className="spotify-navbar">
+            <div className="nav-content">
+                <div className="nav-links">
+                    <Link
+                        to="/wrapped"
+                        className={`nav-link ${location.pathname === '/wrapped' ? 'active' : ''}`}
+                    >
+                        Your Wrapped
+                    </Link>
+                    <Link
+                        to="/compare"
+                        className={`nav-link ${location.pathname === '/compare' ? 'active' : ''}`}
+                    >
+                        Compare Taste
+                    </Link>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="spotify-button logout-button"
+                >
+                    Logout
+                </button>
+            </div>
+        </nav>
+    );
+};
+
+// Main App component
 function App() {
     const [token, setToken] = useState('');
     const [topTracks, setTopTracks] = useState([]);
@@ -18,7 +60,6 @@ function App() {
     const [trackFeatures, setTrackFeatures] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState('wrapped'); // 'wrapped' or 'compare'
 
     useEffect(() => {
         const urlToken = getTokenFromUrl();
@@ -40,61 +81,58 @@ function App() {
             try {
                 setIsLoading(true);
                 setError(null);
-                console.log('Fetching data...');
+                console.log('Starting data fetch...');
 
-                // Fetch user profile
+                // Fetch user profile first
                 console.log('Fetching user profile...');
                 const userRes = await axios.get('https://api.spotify.com/v1/me', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
+                console.log('User profile received:', userRes.data);
                 setUser(userRes.data);
-                console.log('User data:', userRes.data);
 
-                // Fetch top tracks - changed to medium_term (last 6 months)
+                // Fetch top tracks
                 console.log('Fetching top tracks...');
                 const tracksRes = await axios.get('https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                console.log('Top tracks:', tracksRes.data.items);
-
-                if (!tracksRes.data.items.length) {
-                    setError('No recent listening data found. Try listening to some songs and come back!');
-                    return;
-                }
-
+                console.log('Top tracks received:', tracksRes.data.items);
                 setTopTracks(tracksRes.data.items);
 
-                // Fetch track features
-                console.log('Fetching track features...');
-                try {
-                    const trackIds = tracksRes.data.items.map(track => track.id).join(',');
-                    const featuresRes = await axios.get(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    console.log('Track features:', featuresRes.data.audio_features);
-                    setTrackFeatures(featuresRes.data.audio_features);
-                } catch (featuresError) {
-                    console.error('Error fetching track features:', featuresError);
-                    // Continue without track features - set empty array
-                    setTrackFeatures([]);
-                }
-
-                // Fetch top artists - changed to medium_term (last 6 months)
+                // Fetch top artists
                 console.log('Fetching top artists...');
                 const artistsRes = await axios.get('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                console.log('Top artists:', artistsRes.data.items);
+                console.log('Top artists received:', artistsRes.data.items);
+                setTopArtists(artistsRes.data.items);
 
-                if (!artistsRes.data.items.length) {
-                    setError('No recent artist data found. Try listening to some songs and come back!');
-                    return;
+                // Fetch track features if we have tracks
+                if (tracksRes.data.items.length > 0) {
+                    console.log('Fetching track features...');
+                    try {
+                        const trackIds = tracksRes.data.items.map(track => track.id).join(',');
+                        const featuresRes = await axios.get(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+                        console.log('Track features received:', featuresRes.data.audio_features);
+                        setTrackFeatures(featuresRes.data.audio_features);
+                    } catch (featuresError) {
+                        console.error('Error fetching track features:', featuresError);
+                        setTrackFeatures([]);
+                    }
                 }
 
-                setTopArtists(artistsRes.data.items);
+                // Log final state
+                console.log('Data fetch complete. State:', {
+                    user: userRes.data,
+                    topTracks: tracksRes.data.items,
+                    topArtists: artistsRes.data.items,
+                    trackFeatures: trackFeatures
+                });
+
             } catch (error) {
                 console.error('Error fetching data:', error);
-                console.error('Error occurred during:', error.config?.url);
                 if (error.response?.status === 401) {
                     setToken('');
                     localStorage.removeItem('spotify_token');
@@ -112,13 +150,18 @@ function App() {
         fetchData();
     }, [token]);
 
-    // Add debug render log
-    console.log('Render state:', {
-        hasToken: !!token,
-        topTracksLength: topTracks.length,
-        topArtistsLength: topArtists.length,
-        trackFeaturesLength: trackFeatures.length
-    });
+    // Debug render log
+    useEffect(() => {
+        console.log('App render state:', {
+            hasToken: !!token,
+            user: user,
+            topTracksLength: topTracks.length,
+            topArtistsLength: topArtists.length,
+            trackFeaturesLength: trackFeatures.length,
+            isLoading: isLoading,
+            error: error
+        });
+    }, [token, user, topTracks, topArtists, trackFeatures, isLoading, error]);
 
     const handleLogin = () => {
         window.location = `${BACKEND_URL}/login?show_dialog=true`;
@@ -134,102 +177,79 @@ function App() {
     };
 
     return (
-        <div className="App" style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
-            <h1>Spotify Wrapped (D3 + React)</h1>
-            {!token ? (
-                <button onClick={handleLogin} style={{ fontSize: 18, padding: '12px 24px', margin: '32px 0' }}>
-                    Login with Spotify
-                </button>
-            ) : (
-                <>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button
-                                onClick={() => setCurrentPage('wrapped')}
-                                style={{
-                                    padding: '0.5rem 1rem',
-                                    backgroundColor: currentPage === 'wrapped' ? '#1DB954' : '#f5f5f5',
-                                    color: currentPage === 'wrapped' ? 'white' : 'black',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Your Wrapped
-                            </button>
-                            <button
-                                onClick={() => setCurrentPage('compare')}
-                                style={{
-                                    padding: '0.5rem 1rem',
-                                    backgroundColor: currentPage === 'compare' ? '#1DB954' : '#f5f5f5',
-                                    color: currentPage === 'compare' ? 'white' : 'black',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Compare Taste
-                            </button>
-                        </div>
-                        <button onClick={handleLogout}>Logout</button>
+        <Router>
+            <div className="App dark-theme">
+                {!token ? (
+                    <div className="login-container">
+                        <h1 className="text-large">Spotify Wrapped</h1>
+                        <button
+                            onClick={handleLogin}
+                            className="spotify-button login-button"
+                        >
+                            Login with Spotify
+                        </button>
                     </div>
-
-                    {user && (
-                        <div style={{ marginBottom: 24, textAlign: 'center' }}>
-                            <h2>Welcome, {user.display_name}!</h2>
-                            <img src={user.images?.[0]?.url} alt="avatar" style={{ width: 80, borderRadius: '50%' }} />
-                        </div>
-                    )}
-
-                    {isLoading ? (
-                        <div style={{ textAlign: 'center', margin: '2rem 0' }}>
-                            <p>Loading your Spotify data...</p>
-                        </div>
-                    ) : error ? (
-                        <div style={{
-                            textAlign: 'center',
-                            margin: '2rem 0',
-                            padding: '1rem',
-                            backgroundColor: '#ffebee',
-                            borderRadius: '8px',
-                            color: '#c62828'
-                        }}>
-                            <p>{error}</p>
-                            {error.includes('No recent') && (
-                                <p style={{ marginTop: '1rem' }}>
-                                    <a
-                                        href="https://open.spotify.com"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: '#1DB954', textDecoration: 'underline' }}
-                                    >
-                                        Open Spotify
-                                    </a> and listen to some songs, then come back!
-                                </p>
+                ) : (
+                    <>
+                        <Navbar onLogout={handleLogout} />
+                        <div className="main-content">
+                            {isLoading ? (
+                                <div className="loading-message">
+                                    Loading your Spotify data...
+                                </div>
+                            ) : error ? (
+                                <div className="error-message">
+                                    <p>{error}</p>
+                                    {error.includes('No recent') && (
+                                        <p>
+                                            <a
+                                                href="https://open.spotify.com"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="spotify-link"
+                                            >
+                                                Open Spotify
+                                            </a> and listen to some songs, then come back!
+                                        </p>
+                                    )}
+                                </div>
+                            ) : (
+                                <Routes>
+                                    <Route
+                                        path="/wrapped"
+                                        element={
+                                            <Dashboard
+                                                currentUser={user}
+                                                topArtists={topArtists}
+                                                topTracks={topTracks}
+                                                recentlyPlayed={[]}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/compare"
+                                        element={
+                                            <ComparisonPage
+                                                currentUser={user}
+                                                token={token}
+                                                currentUserTopArtists={topArtists}
+                                                currentUserTopTracks={topTracks}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/"
+                                        element={
+                                            <Navigate to="/wrapped" replace />
+                                        }
+                                    />
+                                </Routes>
                             )}
                         </div>
-                    ) : (
-                        currentPage === 'wrapped' ? (
-                            topTracks.length > 0 && topArtists.length > 0 && (
-                                <Visualizations
-                                    topTracks={topTracks}
-                                    topArtists={topArtists}
-                                    trackFeatures={trackFeatures}
-                                    showAudioFeatures={trackFeatures.length > 0}
-                                />
-                            )
-                        ) : (
-                            <ComparisonPage
-                                currentUser={user}
-                                token={token}
-                                currentUserTopArtists={topArtists}
-                                currentUserTopTracks={topTracks}
-                            />
-                        )
-                    )}
-                </>
-            )}
-        </div>
+                    </>
+                )}
+            </div>
+        </Router>
     );
 }
 
