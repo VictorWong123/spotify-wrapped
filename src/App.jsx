@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Visualizations from './components/Visualizations';
+import ComparisonPage from './components/ComparisonPage';
 
 const BACKEND_URL = 'http://127.0.0.1:8888';
 
@@ -17,6 +18,7 @@ function App() {
     const [trackFeatures, setTrackFeatures] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState('wrapped'); // 'wrapped' or 'compare'
 
     useEffect(() => {
         const urlToken = getTokenFromUrl();
@@ -41,6 +43,7 @@ function App() {
                 console.log('Fetching data...');
 
                 // Fetch user profile
+                console.log('Fetching user profile...');
                 const userRes = await axios.get('https://api.spotify.com/v1/me', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -48,6 +51,7 @@ function App() {
                 console.log('User data:', userRes.data);
 
                 // Fetch top tracks - changed to medium_term (last 6 months)
+                console.log('Fetching top tracks...');
                 const tracksRes = await axios.get('https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -61,14 +65,22 @@ function App() {
                 setTopTracks(tracksRes.data.items);
 
                 // Fetch track features
-                const trackIds = tracksRes.data.items.map(track => track.id).join(',');
-                const featuresRes = await axios.get(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                console.log('Track features:', featuresRes.data.audio_features);
-                setTrackFeatures(featuresRes.data.audio_features);
+                console.log('Fetching track features...');
+                try {
+                    const trackIds = tracksRes.data.items.map(track => track.id).join(',');
+                    const featuresRes = await axios.get(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    console.log('Track features:', featuresRes.data.audio_features);
+                    setTrackFeatures(featuresRes.data.audio_features);
+                } catch (featuresError) {
+                    console.error('Error fetching track features:', featuresError);
+                    // Continue without track features - set empty array
+                    setTrackFeatures([]);
+                }
 
                 // Fetch top artists - changed to medium_term (last 6 months)
+                console.log('Fetching top artists...');
                 const artistsRes = await axios.get('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=medium_term', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -82,10 +94,13 @@ function App() {
                 setTopArtists(artistsRes.data.items);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                console.error('Error occurred during:', error.config?.url);
                 if (error.response?.status === 401) {
                     setToken('');
                     localStorage.removeItem('spotify_token');
                     setError('Session expired. Please log in again.');
+                } else if (error.response?.status === 403) {
+                    setError(`Permission denied: ${error.config?.url}. Please make sure you've granted all necessary permissions.`);
                 } else {
                     setError('Error fetching your Spotify data. Please try again later.');
                 }
@@ -127,13 +142,45 @@ function App() {
                 </button>
             ) : (
                 <>
-                    <button onClick={handleLogout} style={{ float: 'right' }}>Logout</button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button
+                                onClick={() => setCurrentPage('wrapped')}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    backgroundColor: currentPage === 'wrapped' ? '#1DB954' : '#f5f5f5',
+                                    color: currentPage === 'wrapped' ? 'white' : 'black',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Your Wrapped
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage('compare')}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    backgroundColor: currentPage === 'compare' ? '#1DB954' : '#f5f5f5',
+                                    color: currentPage === 'compare' ? 'white' : 'black',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Compare Taste
+                            </button>
+                        </div>
+                        <button onClick={handleLogout}>Logout</button>
+                    </div>
+
                     {user && (
                         <div style={{ marginBottom: 24, textAlign: 'center' }}>
                             <h2>Welcome, {user.display_name}!</h2>
                             <img src={user.images?.[0]?.url} alt="avatar" style={{ width: 80, borderRadius: '50%' }} />
                         </div>
                     )}
+
                     {isLoading ? (
                         <div style={{ textAlign: 'center', margin: '2rem 0' }}>
                             <p>Loading your Spotify data...</p>
@@ -162,11 +209,21 @@ function App() {
                             )}
                         </div>
                     ) : (
-                        topTracks.length > 0 && topArtists.length > 0 && (
-                            <Visualizations
-                                topTracks={topTracks}
-                                topArtists={topArtists}
-                                trackFeatures={trackFeatures}
+                        currentPage === 'wrapped' ? (
+                            topTracks.length > 0 && topArtists.length > 0 && (
+                                <Visualizations
+                                    topTracks={topTracks}
+                                    topArtists={topArtists}
+                                    trackFeatures={trackFeatures}
+                                    showAudioFeatures={trackFeatures.length > 0}
+                                />
+                            )
+                        ) : (
+                            <ComparisonPage
+                                currentUser={user}
+                                token={token}
+                                currentUserTopArtists={topArtists}
+                                currentUserTopTracks={topTracks}
                             />
                         )
                     )}
