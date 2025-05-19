@@ -14,18 +14,53 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
     const [compatibilityScore, setCompatibilityScore] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [comparisonData, setComparisonData] = useState([]);
 
-    // Generate a shareable link for the current user
-    const generateShareableLink = () => {
-        const data = {
-            userId: currentUser.id,
-            displayName: currentUser.display_name,
-            timestamp: new Date().toISOString()
+    // Add function to get custom time range
+    const getCustomTimeRange = () => {
+        const startDate = new Date('2024-01-01T00:00:00Z');
+        const endDate = new Date();
+        return {
+            after: Math.floor(startDate.getTime()),
+            before: Math.floor(endDate.getTime())
         };
-        const encodedData = btoa(JSON.stringify(data));
-        const link = `${window.location.origin}/compare?data=${encodedData}`;
-        setShareableLink(link);
-        navigator.clipboard.writeText(link);
+    };
+
+    // Update generateShareableLink to include time range
+    const generateShareableLink = async () => {
+        try {
+            setIsLoading(true);
+            const timeRange = getCustomTimeRange();
+
+            // Fetch current user's top artists and tracks for the custom time range
+            const [artistsRes, tracksRes] = await Promise.all([
+                axios.get(`https://api.spotify.com/v1/me/top/artists?limit=10&after=${timeRange.after}&before=${timeRange.before}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                axios.get(`https://api.spotify.com/v1/me/top/tracks?limit=10&after=${timeRange.after}&before=${timeRange.before}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            ]);
+
+            const data = {
+                userId: currentUser.id,
+                displayName: currentUser.display_name,
+                images: currentUser.images,
+                topArtists: artistsRes.data.items,
+                topTracks: tracksRes.data.items,
+                timeRange: timeRange,
+                timestamp: new Date().toISOString()
+            };
+            const encodedData = btoa(JSON.stringify(data));
+            const link = `${window.location.origin}/compare?data=${encodedData}`;
+            setShareableLink(link);
+            navigator.clipboard.writeText(link);
+        } catch (error) {
+            console.error('Error generating shareable link:', error);
+            setError('Error generating shareable link. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const extractUserId = (input) => {
@@ -50,29 +85,58 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
 
         setIsLoading(true);
         setError(null);
+        setOtherUser(null);
+        setOtherUserTopArtists([]);
+        setOtherUserTopTracks([]);
+        setComparisonData([]);
+        setCompatibilityScore(null);
+
         try {
             let userId;
 
             if (inputMethod === 'uri') {
-                // Handle both URI and web URL formats
                 userId = extractUserId(searchQuery);
                 if (!userId) {
                     setError('Invalid Spotify link. Please use either:\n- Spotify URI (spotify:user:username)\n- Web URL (https://open.spotify.com/user/...)');
                     return;
                 }
             } else {
-                // Handle shareable link
                 try {
                     const urlParams = new URLSearchParams(searchQuery.split('?')[1]);
                     const data = JSON.parse(atob(urlParams.get('data')));
                     userId = data.userId;
+
+                    // If it's a shareable link, we already have their data
+                    if (data.topArtists && data.topTracks) {
+                        setOtherUser({
+                            id: data.userId,
+                            display_name: data.displayName,
+                            images: data.images || []
+                        });
+                        setOtherUserTopArtists(data.topArtists);
+                        setOtherUserTopTracks(data.topTracks);
+
+                        // Prepare comparison data
+                        const artistComparisonData = prepareArtistComparisonData(currentUserTopArtists, data.topArtists);
+                        setComparisonData(artistComparisonData);
+
+                        // Calculate compatibility score
+                        const score = calculateCompatibilityScore(
+                            currentUserTopArtists,
+                            data.topArtists,
+                            currentUserTopTracks,
+                            data.topTracks
+                        );
+                        setCompatibilityScore(score);
+                        return;
+                    }
                 } catch (err) {
                     setError('Invalid shareable link');
                     return;
                 }
             }
 
-            // Fetch user profile
+            // For URI/web URL, we can only fetch the user's profile
             const userRes = await axios.get(`https://api.spotify.com/v1/users/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -85,32 +149,17 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
             const foundUser = userRes.data;
             setOtherUser(foundUser);
 
-            // Fetch their top artists and tracks
-            const [artistsRes, tracksRes] = await Promise.all([
-                axios.get(`https://api.spotify.com/v1/users/${foundUser.id}/top/artists?limit=10&time_range=medium_term`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }),
-                axios.get(`https://api.spotify.com/v1/users/${foundUser.id}/top/tracks?limit=10&time_range=medium_term`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-            ]);
-
-            setOtherUserTopArtists(artistsRes.data.items);
-            setOtherUserTopTracks(tracksRes.data.items);
-
-            // Calculate compatibility score
-            const score = calculateCompatibilityScore(
-                currentUserTopArtists,
-                otherUserTopArtists,
-                currentUserTopTracks,
-                otherUserTopTracks
-            );
-            setCompatibilityScore(score);
+            // Show message about sharing wrapped with time range info
+            setError(`To compare with ${foundUser.display_name}, ask them to:\n1. Go to their Spotify Wrapped\n2. Click "Generate Shareable Link" (this will include their top artists/tracks from Jan 1st, 2024)\n3. Share that link with you`);
 
         } catch (error) {
             console.error('Error searching user:', error);
             if (error.response?.status === 403) {
                 setError('This user\'s data is private. They need to share their wrapped link with you.');
+            } else if (error.response?.status === 401) {
+                setError('Your session has expired. Please refresh the page and try again.');
+            } else if (error.response?.status === 404) {
+                setError('User not found. Please check the profile link and try again.');
             } else {
                 setError('Error searching for user. Please try again.');
             }
@@ -153,6 +202,28 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
         return similarity;
     };
 
+    const prepareArtistComparisonData = (user1Artists, user2Artists) => {
+        // Get all unique artists from both users
+        const allArtists = new Set([
+            ...user1Artists.map(a => a.name),
+            ...user2Artists.map(a => a.name)
+        ]);
+
+        // Create comparison data
+        return Array.from(allArtists).map(artistName => {
+            const user1Artist = user1Artists.find(a => a.name === artistName);
+            const user2Artist = user2Artists.find(a => a.name === artistName);
+
+            return {
+                name: artistName,
+                currentUser: user1Artist ? 10 - user1Artists.indexOf(user1Artist) : 0,
+                otherUser: user2Artist ? 10 - user2Artists.indexOf(user2Artist) : 0
+            };
+        }).sort((a, b) =>
+            (b.currentUser + b.otherUser) - (a.currentUser + a.otherUser)
+        ).slice(0, 10); // Top 10 artists
+    };
+
     const prepareGenreComparisonData = () => {
         const getGenres = (artists) => {
             const genreCount = {};
@@ -188,6 +259,8 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
                 <h2 className="card-title">Share Your Wrapped</h2>
                 <p className="text-secondary">
                     Generate a shareable link to let others compare their music taste with yours
+                    <br />
+                    <span className="text-small">(Data from January 1st, 2024 to now)</span>
                 </p>
                 <button
                     onClick={generateShareableLink}
@@ -269,7 +342,7 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
             </div>
 
             {/* Comparison Results */}
-            {otherUser && (
+            {otherUser && comparisonData.length > 0 && (
                 <div className="card">
                     <div className="comparison-header">
                         {otherUser.images?.[0]?.url && (
@@ -296,7 +369,7 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
                         <h3 className="card-subtitle">
                             Top Artists Comparison
                         </h3>
-                        <div className="chart-container">
+                        <div className="chart-container" style={{ height: '400px' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={comparisonData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="var(--spotify-border)" />
@@ -304,6 +377,9 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
                                         dataKey="name"
                                         stroke="var(--spotify-text-secondary)"
                                         tick={{ fill: 'var(--spotify-text-secondary)' }}
+                                        angle={-45}
+                                        textAnchor="end"
+                                        height={100}
                                     />
                                     <YAxis
                                         stroke="var(--spotify-text-secondary)"

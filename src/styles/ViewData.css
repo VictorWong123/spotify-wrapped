@@ -1,0 +1,124 @@
+.view-data-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.page-header h1 {
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    background-color: var(--spotify-light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: var(--spotify-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.text-secondary {
+    color: var(--spotify-text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* Genre Chart */
+.genre-chart {
+    background-color: var(--spotify-lighter-gray);
+    border-radius: 8px;
+    padding: 1rem;
+    height: 400px;
+}
+
+/* Recently Played List */
+.recently-played-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background-color: var(--spotify-lighter-gray);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.track-item:hover {
+    background-color: var(--spotify-hover-gray);
+}
+
+.track-rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--spotify-text-secondary);
+    min-width: 2rem;
+    text-align: center;
+}
+
+.track-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.track-info {
+    flex: 1;
+    min-width: 0;
+    /* Allows text truncation to work */
+}
+
+.track-name {
+    color: var(--spotify-text-primary);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-artist {
+    color: var(--spotify-text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-album {
+    color: var(--spotify-text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .view-data-page {
+        padding: 1rem;
+    }
+
+    .track-album {
+        display: none;
+    }
+
+    .track-image {
+        width: 50px;
+        height: 50px;
+    }
+}
