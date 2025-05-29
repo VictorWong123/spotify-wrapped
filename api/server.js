@@ -4,6 +4,9 @@ const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
 
+// Log the redirect URI for debugging (will only show in Vercel logs)
+console.log('Using redirect URI:', REDIRECT_URI);
+
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -39,6 +42,7 @@ export default async function handler(req, res) {
             scope
         )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
 
+        console.log('Auth URL:', authUrl); // For debugging
         res.redirect(authUrl);
         return;
     }
@@ -46,11 +50,13 @@ export default async function handler(req, res) {
     if (path === 'callback') {
         const code = req.query.code || null;
         if (!code) {
+            console.error('No code provided in callback');
             res.status(400).json({ error: 'No code provided' });
             return;
         }
 
         try {
+            console.log('Received callback with code:', code); // For debugging
             const params = new URLSearchParams();
             params.append('grant_type', 'authorization_code');
             params.append('code', code);
