@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node server/index.js",
-    "vercel-build": "npm run build"
+    "start": "node api/server.js",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.19.1",
