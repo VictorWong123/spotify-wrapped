@@ -10,7 +10,7 @@ import useSpotifyData from './hooks/useSpotifyData';
 import './styles/darkTheme.css';
 import './App.css';
 
-const BACKEND_URL = 'https://spotify-wrapped-mu.vercel.app';
+const BACKEND_URL = 'https://spotify-wrapped-mu.vercel.app/api';
 
 function getTokenFromUrl() {
     const params = new URLSearchParams(window.location.search);
