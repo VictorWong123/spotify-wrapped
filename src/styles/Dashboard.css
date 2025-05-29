@@ -1,54 +1,56 @@
 .dashboard-page {
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1.5rem;
+    box-sizing: border-box;
 }
 
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
 }
 
 .stat-card {
     background-color: var(--spotify-dark-gray);
-    padding: 1.25rem;
+    padding: 1.5rem;
     border-radius: 8px;
-    transition: background-color 0.2s;
     text-align: center;
-}
-
-.stat-card:hover {
-    background-color: var(--spotify-lighter-gray);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stat-value {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--spotify-green);
     margin-bottom: 0.5rem;
 }
 
 .stat-label {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--spotify-text-secondary);
 }
 
 /* Top Lists Section */
 .top-lists {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 .top-list-card {
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .top-list-header {
@@ -59,7 +61,7 @@
 }
 
 .top-list-title {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: var(--spotify-text-primary);
     margin-bottom: 1rem;
@@ -83,7 +85,7 @@
 }
 
 .top-list-rank {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--spotify-green);
     width: 2rem;
@@ -96,14 +98,14 @@
 }
 
 .top-list-name {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--spotify-text-primary);
     margin-bottom: 0.25rem;
 }
 
 .top-list-artist {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--spotify-text-secondary);
 }
 
@@ -115,9 +117,10 @@
 .genre-chart {
     background-color: var(--spotify-light-gray);
     border-radius: 8px;
-    padding: 1.25rem;
-    height: 350px;
-    margin-top: 1rem;
+    padding: 1.5rem;
+    height: 400px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Top Tracks Section */
@@ -139,9 +142,19 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+    .dashboard-page {
+        padding: 1.25rem;
+    }
+
+    .top-lists {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard-page {
-        padding: 0.75rem;
+        padding: 1rem;
     }
 
     .stats-grid {
@@ -150,65 +163,44 @@
     }
 
     .stat-card {
-        padding: 1rem;
+        padding: 1.25rem;
     }
 
     .stat-value {
-        font-size: 1.5rem;
-    }
-
-    .stat-label {
-        font-size: 0.85rem;
+        font-size: 1.75rem;
     }
 
     .top-list-card {
-        padding: 1rem;
+        padding: 1.25rem;
     }
 
     .top-list-title {
-        font-size: 1.1rem;
-    }
-
-    .top-list-item {
-        padding: 0.5rem 0;
-    }
-
-    .top-list-rank {
-        font-size: 1rem;
-    }
-
-    .top-list-name {
-        font-size: 0.9rem;
-    }
-
-    .top-list-artist {
-        font-size: 0.8rem;
+        font-size: 1.2rem;
     }
 
     .profile-image {
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
+        margin-right: 1rem;
     }
 
     .profile-info h2 {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
 
-    .profile-info p {
-        font-size: 0.85rem;
-    }
-
-    .genre-chart,
-    .heatmap-container {
-        height: 300px;
+    .genre-chart {
+        height: 350px;
+        padding: 1.25rem;
     }
 }
 
 .user-profile-card {
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
 }
@@ -227,19 +219,19 @@
 }
 
 .profile-image {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    margin-right: 1.25rem;
+    margin-right: 1.5rem;
 }
 
 .profile-info h2 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin: 0 0 0.5rem 0;
 }
 
 .profile-info p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--spotify-text-secondary);
     margin: 0;
 }
