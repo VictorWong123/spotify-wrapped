@@ -6,11 +6,13 @@ const TopArtistsTable = ({ topArtists }) => {
 
     return (
         <div style={{
-            border: '1px solid #ccc',
+            border: '1px solid var(--spotify-border)',
             padding: '1rem',
             borderRadius: '8px',
             width: '100%',
-            maxWidth: '600px'
+            maxWidth: '600px',
+            backgroundColor: 'var(--spotify-light-gray)',
+            boxSizing: 'border-box'
         }}>
             <h2>Your Top 5 Artists</h2>
             <div style={{

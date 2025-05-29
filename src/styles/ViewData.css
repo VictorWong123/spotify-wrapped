@@ -1,7 +1,7 @@
 .view-data-page {
+    padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
 }
 
 .page-header {
@@ -14,16 +14,17 @@
 }
 
 .card {
-    background-color: var(--spotify-light-gray);
+    background: var(--spotify-dark-gray);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
+    border: 1px solid var(--spotify-border);
 }
 
 .card-title {
     font-size: 1.5rem;
-    color: var(--spotify-text-primary);
     margin-bottom: 0.5rem;
+    color: var(--spotify-text-primary);
 }
 
 .text-secondary {
@@ -39,86 +40,145 @@
     height: 400px;
 }
 
+/* Track and Artist Details Lists */
+.track-details-list,
+.artist-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.track-detail-item,
+.artist-detail-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: var(--spotify-black);
+    border-radius: 4px;
+    border: 1px solid var(--spotify-border);
+}
+
+.track-rank,
+.artist-rank {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--spotify-text-secondary);
+    width: 40px;
+    text-align: center;
+}
+
+.track-info,
+.artist-info {
+    flex: 1;
+    margin: 0 1rem;
+}
+
+.track-name,
+.artist-name {
+    font-size: 1.1rem;
+    color: var(--spotify-text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.track-artist,
+.artist-genres {
+    font-size: 0.9rem;
+    color: var(--spotify-text-secondary);
+}
+
+.track-metrics,
+.artist-metrics {
+    display: flex;
+    gap: 2rem;
+    margin-left: auto;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--spotify-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    font-size: 1rem;
+    color: var(--spotify-text-primary);
+    font-weight: bold;
+}
+
 /* Recently Played List */
 .recently-played-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .track-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
     padding: 0.75rem;
-    background-color: var(--spotify-lighter-gray);
+    background: var(--spotify-black);
     border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.track-item:hover {
-    background-color: var(--spotify-hover-gray);
-}
-
-.track-rank {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--spotify-text-secondary);
-    min-width: 2rem;
-    text-align: center;
+    border: 1px solid var(--spotify-border);
 }
 
 .track-image {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 4px;
-    object-fit: cover;
-}
-
-.track-info {
-    flex: 1;
-    min-width: 0;
-    /* Allows text truncation to work */
-}
-
-.track-name {
-    color: var(--spotify-text-primary);
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.track-artist {
-    color: var(--spotify-text-secondary);
-    font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-right: 1rem;
 }
 
 .track-album {
+    margin-left: auto;
     color: var(--spotify-text-secondary);
     font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
 }
 
-/* Responsive adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
     .view-data-page {
         padding: 1rem;
     }
 
+    .track-metrics,
+    .artist-metrics {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .metric {
+        min-width: 60px;
+    }
+
     .track-album {
         display: none;
     }
+}
 
-    .track-image {
-        width: 50px;
-        height: 50px;
-    }
+/* Loading State */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--spotify-text-secondary);
+}
+
+/* Error State */
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    padding: 1rem;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 4px;
+    margin-top: 1rem;
 }

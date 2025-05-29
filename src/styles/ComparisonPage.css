@@ -68,6 +68,14 @@
 /* Comparison Section */
 .comparison-section {
     margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--spotify-border);
+}
+
+.comparison-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
 }
 
 .comparison-header {
@@ -77,14 +85,38 @@
     margin-bottom: 2rem;
 }
 
-.compatibility-score {
-    color: var(--spotify-green);
+.card-subtitle {
+    font-size: 1.2rem;
+    color: var(--spotify-text-primary);
+    margin-bottom: 1rem;
 }
 
-/* Chart Section */
+/* Chart Container */
 .chart-container {
-    height: 400px;
-    margin-bottom: 3rem;
+    background-color: var(--spotify-light-gray);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+/* Compatibility Score */
+.compatibility-score {
+    color: var(--spotify-green);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* Error Message */
+.error-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 0, 0, 0.1);
+    border-radius: 4px;
+    color: #ff4444;
+}
+
+.error-message p {
+    margin: 0.5rem 0;
 }
 
 /* Share Section */
@@ -130,6 +162,20 @@
     border-color: var(--spotify-green);
 }
 
+/* Common Artists Grid */
+.common-artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.artist-rank {
+    font-size: 0.9rem;
+    color: var(--spotify-text-secondary);
+    line-height: 1.4;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .comparison-page {
@@ -165,5 +211,13 @@
 
     .shareable-link-container input {
         font-size: 0.8rem;
+    }
+
+    .common-artists-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 300px !important;
     }
 }

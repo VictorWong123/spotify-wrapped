@@ -10,7 +10,9 @@ const TopTracksTable = ({ topTracks }) => {
             padding: '1rem',
             borderRadius: '8px',
             width: '100%',
-            maxWidth: '600px'
+            maxWidth: '600px',
+            backgroundColor: 'var(--spotify-light-gray)',
+            boxSizing: 'border-box'
         }}>
             <h2>Your Top 5 Tracks</h2>
             <div style={{

@@ -20,6 +20,8 @@ app.get('/login', (req, res) => {
         'user-library-read',
         'user-read-private',
         'user-read-email',
+        'user-read-playback-state',
+        'user-read-currently-playing'
     ].join(' ');
 
     const showDialog = req.query.show_dialog === 'true';
