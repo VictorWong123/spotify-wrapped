@@ -34,46 +34,12 @@ export default async function handler(req, res) {
             method: req.method,
             url: req.url,
             query: req.query,
-            headers: req.headers
+            headers: req.headers,
+            rawUrl: req.url
         });
 
-        // Extract the path from the query parameters (Vercel's routing)
-        const { path } = req.query;
-
-        // Handle login request
-        if (path === 'login') {
-            console.log('Handling login request');
-            if (!CLIENT_ID || !REDIRECT_URI) {
-                console.error('Missing environment variables:', {
-                    hasClientId: !!CLIENT_ID,
-                    hasRedirectUri: !!REDIRECT_URI
-                });
-                throw new Error('Missing required environment variables');
-            }
-
-            const scope = [
-                'user-top-read',
-                'user-read-recently-played',
-                'user-read-playback-position',
-                'user-library-read',
-                'user-read-private',
-                'user-read-email',
-                'user-read-playback-state',
-                'user-read-currently-playing'
-            ].join(' ');
-
-            const showDialog = req.query.show_dialog === 'true';
-            const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(
-                scope
-            )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
-
-            console.log('Redirecting to Spotify auth URL:', authUrl);
-            res.redirect(authUrl);
-            return;
-        }
-
-        // Handle callback request
-        if (path === 'callback') {
+        // Handle callback request first (since it's more specific)
+        if (req.url.includes('/api/callback') || req.query.path === 'callback') {
             console.log('Handling callback request');
             if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
                 console.error('Missing environment variables:', {
@@ -136,10 +102,42 @@ export default async function handler(req, res) {
             }
         }
 
+        // Handle login request
+        if (req.url.includes('/api/login') || req.query.path === 'login') {
+            console.log('Handling login request');
+            if (!CLIENT_ID || !REDIRECT_URI) {
+                console.error('Missing environment variables:', {
+                    hasClientId: !!CLIENT_ID,
+                    hasRedirectUri: !!REDIRECT_URI
+                });
+                throw new Error('Missing required environment variables');
+            }
+
+            const scope = [
+                'user-top-read',
+                'user-read-recently-played',
+                'user-read-playback-position',
+                'user-library-read',
+                'user-read-private',
+                'user-read-email',
+                'user-read-playback-state',
+                'user-read-currently-playing'
+            ].join(' ');
+
+            const showDialog = req.query.show_dialog === 'true';
+            const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(
+                scope
+            )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
+
+            console.log('Redirecting to Spotify auth URL:', authUrl);
+            res.redirect(authUrl);
+            return;
+        }
+
         console.log('No matching route found:', {
             url: req.url,
-            path: path,
-            query: req.query
+            query: req.query,
+            rawUrl: req.url
         });
         res.status(404).json({
             error: 'Not found',
