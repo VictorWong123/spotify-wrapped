@@ -28,9 +28,60 @@ export default async function handler(req, res) {
             return;
         }
 
-        const { path } = req.query;
+        // Log the request path and query for debugging
+        console.log('Request path:', req.url);
+        console.log('Request query:', req.query);
 
-        if (path === 'login') {
+        // Check if this is a callback request
+        if (req.url.includes('/api/callback')) {
+            if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
+                throw new Error('Missing required environment variables');
+            }
+
+            const code = req.query.code || null;
+            if (!code) {
+                console.error('No code provided in callback');
+                res.status(400).json({ error: 'No code provided' });
+                return;
+            }
+
+            try {
+                console.log('Processing callback with code');
+                const params = new URLSearchParams();
+                params.append('grant_type', 'authorization_code');
+                params.append('code', code);
+                params.append('redirect_uri', REDIRECT_URI);
+
+                const response = await axios.post(
+                    'https://accounts.spotify.com/api/token',
+                    params,
+                    {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            Authorization:
+                                'Basic ' +
+                                Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+                        },
+                    }
+                );
+
+                console.log('Token received, redirecting to app');
+                res.redirect(
+                    `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`
+                );
+                return;
+            } catch (err) {
+                console.error('Token error:', err.response?.data || err.message);
+                res.status(500).json({
+                    error: 'Failed to get tokens',
+                    details: err.response?.data || err.message
+                });
+                return;
+            }
+        }
+
+        // Handle login request
+        if (req.url.includes('/api/login')) {
             if (!CLIENT_ID || !REDIRECT_URI) {
                 throw new Error('Missing required environment variables');
             }
@@ -51,57 +102,13 @@ export default async function handler(req, res) {
                 scope
             )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
 
-            console.log('Auth URL:', authUrl);
+            console.log('Redirecting to auth URL:', authUrl);
             res.redirect(authUrl);
             return;
         }
 
-        if (path === 'callback') {
-            if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
-                throw new Error('Missing required environment variables');
-            }
-
-            const code = req.query.code || null;
-            if (!code) {
-                console.error('No code provided in callback');
-                res.status(400).json({ error: 'No code provided' });
-                return;
-            }
-
-            try {
-                console.log('Received callback with code');
-                const params = new URLSearchParams();
-                params.append('grant_type', 'authorization_code');
-                params.append('code', code);
-                params.append('redirect_uri', REDIRECT_URI);
-
-                const response = await axios.post(
-                    'https://accounts.spotify.com/api/token',
-                    params,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            Authorization:
-                                'Basic ' +
-                                Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
-                        },
-                    }
-                );
-
-                res.redirect(
-                    `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`
-                );
-            } catch (err) {
-                console.error('Token error:', err.response?.data || err.message);
-                res.status(500).json({
-                    error: 'Failed to get tokens',
-                    details: err.response?.data || err.message
-                });
-            }
-            return;
-        }
-
-        res.status(404).json({ error: 'Not found' });
+        console.log('No matching route found for:', req.url);
+        res.status(404).json({ error: 'Not found', path: req.url });
     } catch (error) {
         console.error('Server error:', error);
         res.status(500).json({
