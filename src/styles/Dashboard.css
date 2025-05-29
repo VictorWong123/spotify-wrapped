@@ -1,23 +1,23 @@
 .dashboard-page {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 2rem;
     box-sizing: border-box;
 }
 
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
     width: 100%;
 }
 
 .stat-card {
     background-color: var(--spotify-dark-gray);
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 8px;
     text-align: center;
     width: 100%;
@@ -25,22 +25,22 @@
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: var(--spotify-green);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .stat-label {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--spotify-text-secondary);
 }
 
 /* Top Lists Section */
 .top-lists {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
     margin-bottom: 2rem;
     width: 100%;
 }
@@ -48,64 +48,42 @@
 .top-list-card {
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: 2rem;
     width: 100%;
     box-sizing: border-box;
 }
 
-.top-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
 .top-list-title {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--spotify-text-primary);
-    margin-bottom: 1rem;
-}
-
-.top-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    margin-bottom: 1.25rem;
 }
 
 .top-list-item {
     display: flex;
     align-items: center;
-    padding: 0.75rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--spotify-border);
 }
 
-.top-list-item:last-child {
-    border-bottom: none;
-}
-
 .top-list-rank {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--spotify-green);
-    width: 2rem;
+    width: 2.5rem;
     text-align: center;
 }
 
-.top-list-info {
-    flex: 1;
-    margin-left: 1rem;
-}
-
 .top-list-name {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--spotify-text-primary);
     margin-bottom: 0.25rem;
 }
 
 .top-list-artist {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--spotify-text-secondary);
 }
 
@@ -117,8 +95,8 @@
 .genre-chart {
     background-color: var(--spotify-light-gray);
     border-radius: 8px;
-    padding: 1.5rem;
-    height: 400px;
+    padding: 2rem;
+    height: 500px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -142,24 +120,140 @@
 }
 
 /* Responsive adjustments */
+@media (min-width: 1921px) {
+    .dashboard-page {
+        max-width: 1800px;
+        padding: 3rem;
+    }
+
+    .stat-card {
+        padding: 2.5rem;
+    }
+
+    .stat-value {
+        font-size: 3rem;
+    }
+
+    .stat-label {
+        font-size: 1.3rem;
+    }
+
+    .top-list-card {
+        padding: 2.5rem;
+    }
+
+    .top-list-title {
+        font-size: 1.8rem;
+    }
+
+    .genre-chart {
+        height: 600px;
+        padding: 2.5rem;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-info h2 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 1600px) {
+    .dashboard-page {
+        max-width: 1200px;
+        padding: 1.75rem;
+    }
+
+    .stat-card {
+        padding: 1.75rem;
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+    }
+
+    .top-list-card {
+        padding: 1.75rem;
+    }
+
+    .top-list-title {
+        font-size: 1.4rem;
+    }
+
+    .genre-chart {
+        height: 450px;
+        padding: 1.75rem;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-info h2 {
+        font-size: 1.8rem;
+    }
+}
+
 @media (max-width: 1200px) {
+    .dashboard-page {
+        max-width: 1000px;
+        padding: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .top-lists {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .top-list-card {
+        padding: 1.5rem;
+    }
+
+    .top-list-title {
+        font-size: 1.3rem;
+    }
+
+    .genre-chart {
+        height: 400px;
+        padding: 1.5rem;
+    }
+
+    .profile-image {
+        width: 90px;
+        height: 90px;
+        margin-right: 1.5rem;
+    }
+
+    .profile-info h2 {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 900px) {
     .dashboard-page {
         padding: 1.25rem;
     }
 
-    .top-lists {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-page {
-        padding: 1rem;
-    }
-
     .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
     }
 
     .stat-card {
@@ -170,6 +264,15 @@
         font-size: 1.75rem;
     }
 
+    .stat-label {
+        font-size: 1rem;
+    }
+
+    .top-lists {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
     .top-list-card {
         padding: 1.25rem;
     }
@@ -178,26 +281,108 @@
         font-size: 1.2rem;
     }
 
-    .profile-image {
-        width: 80px;
-        height: 80px;
-        margin-right: 1rem;
+    .top-list-item {
+        padding: 0.75rem 0;
     }
 
-    .profile-info h2 {
-        font-size: 1.5rem;
+    .top-list-rank {
+        font-size: 1.2rem;
+        width: 2rem;
     }
 
     .genre-chart {
         height: 350px;
         padding: 1.25rem;
     }
+
+    .profile-image {
+        width: 80px;
+        height: 80px;
+        margin-right: 1.25rem;
+    }
+
+    .profile-info h2 {
+        font-size: 1.4rem;
+    }
+
+    .profile-info p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-page {
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .top-list-card {
+        padding: 1rem;
+    }
+
+    .top-list-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .top-list-item {
+        padding: 0.5rem 0;
+    }
+
+    .top-list-rank {
+        font-size: 1.1rem;
+        width: 1.75rem;
+    }
+
+    .top-list-name {
+        font-size: 0.95rem;
+    }
+
+    .top-list-artist {
+        font-size: 0.85rem;
+    }
+
+    .genre-chart {
+        height: 300px;
+        padding: 1rem;
+    }
+
+    .profile-image {
+        width: 60px;
+        height: 60px;
+        margin-right: 1rem;
+    }
+
+    .profile-info h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info p {
+        font-size: 0.9rem;
+    }
 }
 
 .user-profile-card {
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: 2rem;
     margin-bottom: 2rem;
     width: 100%;
     box-sizing: border-box;
@@ -219,19 +404,19 @@
 }
 
 .profile-image {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    margin-right: 1.5rem;
+    margin-right: 2rem;
 }
 
 .profile-info h2 {
-    font-size: 1.8rem;
-    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    margin: 0 0 0.75rem 0;
 }
 
 .profile-info p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--spotify-text-secondary);
     margin: 0;
 }
