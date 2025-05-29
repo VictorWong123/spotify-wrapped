@@ -32,8 +32,38 @@ export default async function handler(req, res) {
         console.log('Request path:', req.url);
         console.log('Request query:', req.query);
 
-        // Check if this is a callback request
-        if (req.url.includes('/api/callback')) {
+        // Extract the path from the query parameters (Vercel's routing)
+        const { path } = req.query;
+
+        // Handle login request
+        if (path === 'login') {
+            if (!CLIENT_ID || !REDIRECT_URI) {
+                throw new Error('Missing required environment variables');
+            }
+
+            const scope = [
+                'user-top-read',
+                'user-read-recently-played',
+                'user-read-playback-position',
+                'user-library-read',
+                'user-read-private',
+                'user-read-email',
+                'user-read-playback-state',
+                'user-read-currently-playing'
+            ].join(' ');
+
+            const showDialog = req.query.show_dialog === 'true';
+            const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(
+                scope
+            )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
+
+            console.log('Redirecting to auth URL:', authUrl);
+            res.redirect(authUrl);
+            return;
+        }
+
+        // Handle callback request
+        if (path === 'callback') {
             if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
                 throw new Error('Missing required environment variables');
             }
@@ -80,35 +110,8 @@ export default async function handler(req, res) {
             }
         }
 
-        // Handle login request
-        if (req.url.includes('/api/login')) {
-            if (!CLIENT_ID || !REDIRECT_URI) {
-                throw new Error('Missing required environment variables');
-            }
-
-            const scope = [
-                'user-top-read',
-                'user-read-recently-played',
-                'user-read-playback-position',
-                'user-library-read',
-                'user-read-private',
-                'user-read-email',
-                'user-read-playback-state',
-                'user-read-currently-playing'
-            ].join(' ');
-
-            const showDialog = req.query.show_dialog === 'true';
-            const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${encodeURIComponent(
-                scope
-            )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
-
-            console.log('Redirecting to auth URL:', authUrl);
-            res.redirect(authUrl);
-            return;
-        }
-
-        console.log('No matching route found for:', req.url);
-        res.status(404).json({ error: 'Not found', path: req.url });
+        console.log('No matching route found for:', req.url, 'with path:', path);
+        res.status(404).json({ error: 'Not found', path: req.url, query: req.query });
     } catch (error) {
         console.error('Server error:', error);
         res.status(500).json({
