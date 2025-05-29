@@ -57,14 +57,11 @@ app.get('/callback', async (req, res) => {
 
         // You can send the tokens to the frontend, or set a cookie, etc.
         res.redirect(
-            `http://127.0.0.1:3000/?access_token=${response.data.access_token}`
+            `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`
         );
     } catch (err) {
         res.status(500).json({ error: 'Failed to get tokens', details: err.message });
     }
 });
 
-const PORT = 8888;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-}); 
+module.exports = app; 
