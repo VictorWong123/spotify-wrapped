@@ -8,7 +8,8 @@ const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
 console.log('Environment check:', {
     hasClientId: !!CLIENT_ID,
     hasClientSecret: !!CLIENT_SECRET,
-    redirectUri: REDIRECT_URI
+    redirectUri: REDIRECT_URI,
+    fullRedirectUri: REDIRECT_URI // Log the full URI for verification
 });
 
 export default async function handler(req, res) {
@@ -28,16 +29,25 @@ export default async function handler(req, res) {
             return;
         }
 
-        // Log the request path and query for debugging
-        console.log('Request path:', req.url);
-        console.log('Request query:', req.query);
+        // Log the full request details for debugging
+        console.log('Request details:', {
+            method: req.method,
+            url: req.url,
+            query: req.query,
+            headers: req.headers
+        });
 
         // Extract the path from the query parameters (Vercel's routing)
         const { path } = req.query;
 
         // Handle login request
         if (path === 'login') {
+            console.log('Handling login request');
             if (!CLIENT_ID || !REDIRECT_URI) {
+                console.error('Missing environment variables:', {
+                    hasClientId: !!CLIENT_ID,
+                    hasRedirectUri: !!REDIRECT_URI
+                });
                 throw new Error('Missing required environment variables');
             }
 
@@ -57,20 +67,26 @@ export default async function handler(req, res) {
                 scope
             )}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}${showDialog ? '&show_dialog=true' : ''}`;
 
-            console.log('Redirecting to auth URL:', authUrl);
+            console.log('Redirecting to Spotify auth URL:', authUrl);
             res.redirect(authUrl);
             return;
         }
 
         // Handle callback request
         if (path === 'callback') {
+            console.log('Handling callback request');
             if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI) {
+                console.error('Missing environment variables:', {
+                    hasClientId: !!CLIENT_ID,
+                    hasClientSecret: !!CLIENT_SECRET,
+                    hasRedirectUri: !!REDIRECT_URI
+                });
                 throw new Error('Missing required environment variables');
             }
 
             const code = req.query.code || null;
             if (!code) {
-                console.error('No code provided in callback');
+                console.error('No code provided in callback. Query params:', req.query);
                 res.status(400).json({ error: 'No code provided' });
                 return;
             }
@@ -81,6 +97,12 @@ export default async function handler(req, res) {
                 params.append('grant_type', 'authorization_code');
                 params.append('code', code);
                 params.append('redirect_uri', REDIRECT_URI);
+
+                console.log('Requesting token from Spotify with params:', {
+                    grant_type: 'authorization_code',
+                    redirect_uri: REDIRECT_URI,
+                    hasCode: !!code
+                });
 
                 const response = await axios.post(
                     'https://accounts.spotify.com/api/token',
@@ -95,13 +117,17 @@ export default async function handler(req, res) {
                     }
                 );
 
-                console.log('Token received, redirecting to app');
-                res.redirect(
-                    `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`
-                );
+                console.log('Token received successfully');
+                const redirectUrl = `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`;
+                console.log('Redirecting to app:', redirectUrl);
+                res.redirect(redirectUrl);
                 return;
             } catch (err) {
-                console.error('Token error:', err.response?.data || err.message);
+                console.error('Token error:', {
+                    status: err.response?.status,
+                    data: err.response?.data,
+                    message: err.message
+                });
                 res.status(500).json({
                     error: 'Failed to get tokens',
                     details: err.response?.data || err.message
@@ -110,10 +136,21 @@ export default async function handler(req, res) {
             }
         }
 
-        console.log('No matching route found for:', req.url, 'with path:', path);
-        res.status(404).json({ error: 'Not found', path: req.url, query: req.query });
+        console.log('No matching route found:', {
+            url: req.url,
+            path: path,
+            query: req.query
+        });
+        res.status(404).json({
+            error: 'Not found',
+            path: req.url,
+            query: req.query
+        });
     } catch (error) {
-        console.error('Server error:', error);
+        console.error('Server error:', {
+            message: error.message,
+            stack: error.stack
+        });
         res.status(500).json({
             error: 'Internal server error',
             details: error.message

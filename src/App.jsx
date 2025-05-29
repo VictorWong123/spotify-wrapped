@@ -14,7 +14,9 @@ const BACKEND_URL = 'https://spotify-wrapped-mu.vercel.app/api';
 
 function getTokenFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    return params.get('access_token');
+    const token = params.get('access_token');
+    console.log('Token from URL:', token ? 'Present' : 'Not found');
+    return token;
 }
 
 function App() {
@@ -22,23 +24,34 @@ function App() {
     const { user, topTracks, topArtists, trackFeatures, error, isLoading } = useSpotifyData(token);
 
     useEffect(() => {
+        console.log('App mounted, checking for token...');
         const urlToken = getTokenFromUrl();
         if (urlToken) {
+            console.log('Found token in URL, setting token and storing in localStorage');
             setToken(urlToken);
             localStorage.setItem('spotify_token', urlToken);
             // Remove access_token from URL
             window.history.replaceState({}, document.title, '/');
         } else {
+            console.log('No token in URL, checking localStorage...');
             const localToken = localStorage.getItem('spotify_token');
-            if (localToken) setToken(localToken);
+            if (localToken) {
+                console.log('Found token in localStorage');
+                setToken(localToken);
+            } else {
+                console.log('No token found in localStorage');
+            }
         }
     }, []);
 
     const handleLogin = () => {
-        window.location = `${BACKEND_URL}/server?path=login&show_dialog=true`;
+        const loginUrl = `${BACKEND_URL}/server?path=login&show_dialog=true`;
+        console.log('Initiating login flow, redirecting to:', loginUrl);
+        window.location.href = loginUrl;
     };
 
     const handleLogout = () => {
+        console.log('Logging out, clearing token and localStorage');
         setToken('');
         localStorage.removeItem('spotify_token');
     };
