@@ -19,36 +19,32 @@
     min-height: 100vh;
     background-color: var(--spotify-black);
     color: var(--spotify-text-primary);
-    font-size: 14px;
-    /* Base font size */
+    font-size: 13px;
+    /* Reduced base font size */
 }
 
 .card {
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    /* Reduced from 2rem */
-    margin-bottom: 2rem;
-    /* Reduced from 3rem */
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .card-title {
-    font-size: 1.5rem;
-    /* Reduced from 1.8rem */
+    font-size: 1.25rem;
+    /* Reduced from 1.5rem */
     color: var(--spotify-text-primary);
     font-weight: 600;
-    margin-bottom: 1rem;
-    /* Reduced from 1.5rem */
+    margin-bottom: 0.75rem;
 }
 
 .card-subtitle {
-    font-size: 1.2rem;
-    /* Reduced from 1.5rem */
+    font-size: 1.1rem;
+    /* Reduced from 1.2rem */
     color: var(--spotify-green);
     font-weight: 600;
-    margin-bottom: 1rem;
-    /* Reduced from 1.5rem */
+    margin-bottom: 0.75rem;
 }
 
 /* Form elements */
@@ -126,20 +122,20 @@
 }
 
 .text-large {
-    font-size: 2rem;
-    /* Reduced from 2.5rem */
-    font-weight: 700;
-}
-
-.text-medium {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     /* Reduced from 2rem */
     font-weight: 700;
 }
 
+.text-medium {
+    font-size: 1.25rem;
+    /* Reduced from 1.5rem */
+    font-weight: 700;
+}
+
 .text-small {
-    font-size: 1rem;
-    /* Reduced from 1.2rem */
+    font-size: 0.9rem;
+    /* Reduced from 1rem */
     font-weight: 600;
 }
 
@@ -147,14 +143,15 @@
 .spotify-navbar {
     background-color: var(--spotify-dark-gray);
     border-bottom: 1px solid var(--spotify-border);
-    padding: 0.5rem 2rem;
+    padding: 0.4rem 1.5rem;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
 .nav-content {
-    max-width: 1400px;
+    max-width: 1000px;
+    /* Reduced from 1400px */
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -169,9 +166,10 @@
 .nav-link {
     color: var(--spotify-text-secondary);
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    /* Reduced from 1.1rem */
     font-weight: 500;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 4px;
     transition: all 0.2s ease;
 }
@@ -187,8 +185,8 @@
 }
 
 .logout-button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1.1rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
     background-color: var(--spotify-light-gray);
     color: var(--spotify-text-primary);
     border: none;
@@ -204,16 +202,14 @@
 
 /* Welcome Header */
 .welcome-header {
-    margin-bottom: 0.75rem;
-    /* Reduced from 1rem */
-    padding-bottom: 0.75rem;
-    /* Reduced from 1rem */
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--spotify-border);
 }
 
 .welcome-title {
-    font-size: 2rem;
-    /* Reduced from 2.5rem */
+    font-size: 1.75rem;
+    /* Reduced from 2rem */
     font-weight: 700;
     color: var(--spotify-text-primary);
     margin: 0;
@@ -221,10 +217,10 @@
 
 /* Main Content Styles */
 .main-content {
-    max-width: 1200px;
-    /* Reduced from 1400px */
+    max-width: 1000px;
+    /* Reduced from 1200px */
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 .login-container {
@@ -233,13 +229,13 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .login-button {
-    font-size: 1.2rem;
-    padding: 1rem 2rem;
-    margin-top: 2rem;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
 }
 
 .loading-message {
@@ -281,24 +277,28 @@
     }
 
     .main-content {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     .card {
         padding: 1rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .card-title {
-        font-size: 1.3rem;
-    }
-
-    .card-subtitle {
         font-size: 1.1rem;
     }
 
+    .card-subtitle {
+        font-size: 1rem;
+    }
+
     .welcome-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -312,8 +312,9 @@
 
 .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    /* Reduced from 600px */
+    gap: 1.5rem;
     width: 100%;
 }
 
