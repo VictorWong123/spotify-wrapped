@@ -9,7 +9,8 @@
             "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "dist"
+                "distDir": "dist",
+                "buildCommand": "npm run build"
             }
         }
     ],
@@ -19,8 +20,22 @@
             "dest": "server/index.js"
         },
         {
+            "handle": "filesystem"
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.html"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*).js",
+            "headers": [
+                {
+                    "key": "Content-Type",
+                    "value": "application/javascript"
+                }
+            ]
         }
     ]
 }
