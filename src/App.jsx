@@ -35,7 +35,7 @@ function App() {
     }, []);
 
     const handleLogin = () => {
-        window.location = `${BACKEND_URL}/login?show_dialog=true`;
+        window.location = `${BACKEND_URL}/server?path=login&show_dialog=true`;
     };
 
     const handleLogout = () => {
