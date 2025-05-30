@@ -27,6 +27,7 @@ const Dashboard = ({ currentUser, topArtists, topTracks, token, trackFeatures })
             <TopListsSection
                 topArtists={topArtists}
                 topTracks={topTracks}
+                trackFeatures={trackFeatures}
             />
         </div>
     );
