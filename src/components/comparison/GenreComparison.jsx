@@ -49,15 +49,7 @@ const prepareGenreData = (user1Artists, user2Artists, user1Name, user2Name) => {
 };
 
 const GenreComparison = ({ currentUser, otherUser, currentUserTopArtists, otherUserTopArtists }) => {
-    console.log('GenreComparison props:', {
-        currentUserTopArtistsLength: currentUserTopArtists?.length,
-        otherUserTopArtistsLength: otherUserTopArtists?.length,
-        currentUserTopArtists: currentUserTopArtists,
-        otherUserTopArtists: otherUserTopArtists
-    });
-
     if (!currentUserTopArtists?.length || !otherUserTopArtists?.length) {
-        console.log('GenreComparison: Not enough artist data to display');
         return (
             <div className="comparison-section">
                 <h3 className="card-subtitle">Genre Comparison</h3>

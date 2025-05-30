@@ -5,10 +5,6 @@ import AudioFeaturesRadarChart from './AudioFeaturesRadarChart';
 import TopArtistsTable from './TopArtistsTable';
 
 const Visualizations = ({ user, topTracks, topArtists, trackFeatures, showAudioFeatures }) => {
-    useEffect(() => {
-        console.log('Visualizations received user:', user);
-    }, [user]);
-
     return (
         <div className="visualizations-container">
             <div className="welcome-header">

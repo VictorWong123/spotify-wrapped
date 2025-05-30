@@ -227,13 +227,6 @@ const ComparisonPage = ({ currentUser, token, currentUserTopArtists, currentUser
         }
     };
 
-    console.log('ComparisonPage artist data:', {
-        currentUserTopArtistsLength: currentUserTopArtists?.length,
-        otherUserTopArtistsLength: otherUserTopArtists?.length,
-        hasCurrentUser: !!currentUser,
-        hasOtherUser: !!otherUser
-    });
-
     return (
         <div className="dark-theme comparison-page">
             <ShareSection

@@ -44,14 +44,6 @@ const ListeningTime = ({ token, topTracks }) => {
                 const minutes = Math.round(totalMs / (1000 * 60));
                 setTotalMinutes(minutes);
 
-                // Log some stats for verification
-                console.log('Listening Time Stats:', {
-                    totalPlays: allPlays.length,
-                    uniqueTracks: new Set(allPlays.map(play => play.track.id)).size,
-                    averageTrackLength: Math.round(totalMs / allPlays.length / 1000) + ' seconds',
-                    totalMinutes: minutes
-                });
-
             } catch (err) {
                 console.error('Error fetching listening time:', err);
                 setError('Could not calculate listening time');
