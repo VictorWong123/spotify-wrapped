@@ -10,6 +10,13 @@ const TopTracksChart = ({ topTracks }) => {
         // Clear previous visualization
         d3.select(chartRef.current).selectAll('*').remove();
 
+        // Responsive width
+        const container = chartRef.current;
+        const containerWidth = container.offsetWidth || 600;
+        const margin = { top: 20, right: 30, bottom: 90, left: 60 };
+        const width = Math.max(containerWidth - margin.left - margin.right, 300);
+        const height = 400 - margin.top - margin.bottom;
+
         // Prepare data
         const trackData = topTracks.map(track => ({
             name: track.name,
@@ -17,16 +24,13 @@ const TopTracksChart = ({ topTracks }) => {
             artist: track.artists[0].name
         }));
 
-        // Set up dimensions
-        const margin = { top: 20, right: 30, bottom: 90, left: 60 };
-        const width = 600 - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
-
         // Create SVG
         const svg = d3.select(chartRef.current)
             .append('svg')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
+            .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+            .attr('preserveAspectRatio', 'xMidYMid meet')
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -67,9 +71,9 @@ const TopTracksChart = ({ topTracks }) => {
     }, [topTracks]);
 
     return (
-        <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+        <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px', width: '100%', boxSizing: 'border-box', overflowX: 'auto' }}>
             <h2>Top Tracks Popularity</h2>
-            <div ref={chartRef} style={{ minHeight: '400px' }}></div>
+            <div ref={chartRef} style={{ minHeight: '400px', width: '100%' }}></div>
         </div>
     );
 };

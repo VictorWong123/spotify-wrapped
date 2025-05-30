@@ -10,6 +10,14 @@ const TopArtistsRadialChart = ({ topArtists }) => {
         // Clear previous visualization
         d3.select(chartRef.current).selectAll('*').remove();
 
+        // Responsive width
+        const container = chartRef.current;
+        const containerWidth = container.offsetWidth || 400;
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+        const width = Math.max(containerWidth - margin.left - margin.right, 250);
+        const height = 400 - margin.top - margin.bottom;
+        const radius = Math.min(width, height) / 2;
+
         // Prepare data
         const artistData = topArtists.map(artist => ({
             name: artist.name,
@@ -17,17 +25,13 @@ const TopArtistsRadialChart = ({ topArtists }) => {
             followers: artist.followers.total
         }));
 
-        // Set up dimensions
-        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
-        const width = 400 - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
-        const radius = Math.min(width, height) / 2;
-
         // Create SVG
         const svg = d3.select(chartRef.current)
             .append('svg')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
+            .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+            .attr('preserveAspectRatio', 'xMidYMid meet')
             .append('g')
             .attr('transform', `translate(${width / 2 + margin.left},${height / 2 + margin.top})`);
 
@@ -70,9 +74,9 @@ const TopArtistsRadialChart = ({ topArtists }) => {
     }, [topArtists]);
 
     return (
-        <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+        <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px', width: '100%', boxSizing: 'border-box', overflowX: 'auto' }}>
             <h2>Top Artists Radial View</h2>
-            <div ref={chartRef} style={{ minHeight: '400px' }}></div>
+            <div ref={chartRef} style={{ minHeight: '400px', width: '100%' }}></div>
         </div>
     );
 };
