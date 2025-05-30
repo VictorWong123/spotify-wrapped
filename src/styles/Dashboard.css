@@ -5,19 +5,24 @@ html,
     overflow-x: hidden;
 }
 
-.dashboard-page {
-    width: 100%;
+/* Add a new outer wrapper for centering */
+.dashboard-outer {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+}
+
+.dashboard-inner {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
     box-sizing: border-box;
     transform: scale(0.67);
-    transform-origin: top left;
+    transform-origin: top center;
     width: 149.25%;
     min-height: 149.25vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 /* Stats Grid */
@@ -52,21 +57,18 @@ html,
 
 /* Top Lists Section */
 .top-lists {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
     width: 100%;
-    max-width: 1000px;
 }
 
 .top-list-card {
-    width: 100%;
-    max-width: 700px;
-    margin-bottom: 2rem;
-    align-self: center;
     background-color: var(--spotify-dark-gray);
     border-radius: 8px;
     padding: 2rem;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -121,10 +123,9 @@ html,
 /* Top Tracks Section */
 .top-tracks-section {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
     width: 100%;
-    gap: 2rem;
 }
 
 @media (min-width: 1200px) {
@@ -134,6 +135,13 @@ html,
 
     .top-tracks-section .top-list-card {
         flex: 1;
+    }
+}
+
+@media (max-width: 900px) {
+    .top-tracks-section {
+        flex-direction: column;
+        gap: 1rem;
     }
 }
 
@@ -261,83 +269,6 @@ html,
 
     .profile-info h2 {
         font-size: 1.6rem;
-    }
-}
-
-@media (max-width: 900px) {
-    .dashboard-page {
-        padding: 1.25rem;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-    }
-
-    .stat-card {
-        padding: 1.25rem;
-    }
-
-    .stat-value {
-        font-size: 1.75rem;
-    }
-
-    .stat-label {
-        font-size: 1rem;
-    }
-
-    .top-lists {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-    }
-
-    .top-list-card {
-        padding: 1.25rem;
-    }
-
-    .top-list-title {
-        font-size: 1.2rem;
-    }
-
-    .top-list-item {
-        padding: 0.75rem 0;
-    }
-
-    .top-list-rank {
-        font-size: 1.2rem;
-        width: 2rem;
-    }
-
-    .genre-chart {
-        height: 350px;
-        padding: 1.25rem;
-    }
-
-    .profile-image {
-        width: 80px;
-        height: 80px;
-        margin-right: 1.25rem;
-    }
-
-    .profile-info h2 {
-        font-size: 1.4rem;
-    }
-
-    .profile-info p {
-        font-size: 1rem;
-    }
-
-    .top-tracks-section {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .top-list-card {
-        max-width: 100%;
-    }
-
-    .top-lists {
-        max-width: 100%;
     }
 }
 
