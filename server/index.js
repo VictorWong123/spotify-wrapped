@@ -11,6 +11,9 @@ const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
 
+console.log('Starting backend server...');
+console.log('CLIENT_ID:', CLIENT_ID);
+console.log('REDIRECT_URI:', REDIRECT_URI);
 
 app.get('/login', (req, res) => {
     const scope = [
@@ -57,11 +60,19 @@ app.get('/callback', async (req, res) => {
 
         // You can send the tokens to the frontend, or set a cookie, etc.
         res.redirect(
-            `https://spotify-wrapped-mu.vercel.app/?access_token=${response.data.access_token}`
+            `http://localhost:3000/?access_token=${response.data.access_token}`
         );
     } catch (err) {
         res.status(500).json({ error: 'Failed to get tokens', details: err.message });
     }
 });
+
+// Start the server if this file is run directly
+if (require.main === module) {
+    const PORT = process.env.PORT || 5001;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
 module.exports = app; 

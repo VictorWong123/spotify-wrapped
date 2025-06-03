@@ -10,7 +10,7 @@ import useSpotifyData from './hooks/useSpotifyData';
 import './styles/darkTheme.css';
 import './App.css';
 
-const BACKEND_URL = 'https://spotify-wrapped-mu.vercel.app/api';
+const BACKEND_URL = 'http://127.0.0.1:5001';
 
 function getTokenFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -38,7 +38,7 @@ function App() {
     }, []);
 
     const handleLogin = () => {
-        const loginUrl = `${BACKEND_URL}/server?path=login&show_dialog=true`;
+        const loginUrl = `${BACKEND_URL}/login?show_dialog=true`;
         window.location.href = loginUrl;
     };
 
