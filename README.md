@@ -23,7 +23,7 @@ Tech stack: Javascript, React, html, css, d3, node.js, express.js
 
 ---
 
-##Getting Started
+## Getting Started
 
 Follow these instructions to run the project on your local machine.
 
@@ -42,9 +42,11 @@ Set your app’s Redirect URI to: http://127.0.0.1:5001/callback
 
 ### 3. Add your environmental files
 In an .env file in the root directory add:
+```bash
 SPOTIFY_CLIENT_ID=your_spotify_client_id
 SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 SPOTIFY_REDIRECT_URI=http://localhost:8888/callback
+```
 
 ### To run: 
 First start the backend 
